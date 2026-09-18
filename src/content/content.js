@@ -3896,4 +3896,22 @@
     window.addEventListener("mousemove", PVI.onInitMouseMove, true);
     window.catchEvent ||= {};
     catchEvent.onmessage = PVI.winOnMessage;
+
+    (function () {
+        let lastHref = location.href;
+
+        function checkUrlChange() {
+            if (location.href === lastHref) return;
+            lastHref = location.href;
+
+            PVI.reset();
+            PVI.resetAllNodes();
+            PVI.resetExtension();
+            PVI.stack = {};
+            Port.send({ cmd: "hello" }, PVI.onMessage);
+        }
+
+        window.addEventListener("popstate", checkUrlChange);
+        setInterval(checkUrlChange, 250);
+    })();
 })(window, document);
